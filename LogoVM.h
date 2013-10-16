@@ -37,13 +37,14 @@ struct RepeatStack {
 
 class LogoVM {
   public:
-    LogoVM();
+    LogoVM(Stream &s);
     void addUserCmd(char* cmd, byte type, boolean meta, void (* fn) (void));
     void processInput();
     void processNextCmd();
     void pause();
     void start();
   private:
+    Stream* _s;
     char extractCmd(char *buffer);
     int  extractIntArg(char *buffer);
     void storeCmd(char *buffer);

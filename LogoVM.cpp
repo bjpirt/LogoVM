@@ -1,7 +1,8 @@
 #include "Arduino.h"
 #include "LogoVM.h"
 
-LogoVM::LogoVM() {
+LogoVM::LogoVM(Stream &s) {
+  _s = &s;
   fn_counter = 0;
   input_buffer_pos = 0;
   cmd_write_pos = 0;
@@ -22,8 +23,8 @@ void LogoVM::pause(){
 // This gets called each loop and is responsible for kicking off any commands
 void LogoVM::processInput(){
   int arg;
-  if (Serial.available() > 0){
-    char incomingByte = Serial.read();
+  if (_s->available() > 0){
+    char incomingByte = _s->read();
     if(incomingByte == '\r' || incomingByte == '\n'){
       // we have a message in the buffer
       input_buffer[input_buffer_pos] = '\0';
@@ -41,7 +42,7 @@ void LogoVM::processInput(){
 // This allows you to register a callback funtion
 void LogoVM::addUserCmd(char* cmd, byte type, boolean meta, void (* fn) (void)){
   if (fn_counter == COMMAND_COUNT) {
-    Serial.println("Too many commands defined");
+    _s->println("Too many commands defined");
     return;
   }
   user_cmds[fn_counter].cmd = cmd;
@@ -56,7 +57,6 @@ char LogoVM::extractCmd(char *buffer){
   for(byte cmd = 0; cmd<COMMAND_COUNT; cmd++){
     for(byte j = 0; j < input_buffer_pos; j++){
       //compare each letter until we hit a space or the end of the string to find a match
-      //Serial.println(cmd_list[cmd][j]);
       if(buffer[j] == user_cmds[cmd].cmd[j]){
         if((buffer[j + 1] == ' ' || buffer[j + 1] == '\0') && user_cmds[cmd].cmd[j + 1] == '\0'){
           //This is a command match, so return the index of the user command
@@ -96,7 +96,7 @@ int LogoVM::extractIntArg(char *buffer){
 void LogoVM::storeCmd(char *buffer){
   char cmd = extractCmd(input_buffer);
   if(cmd < 0){
-    Serial.println("Syntax error: unknown command");
+    _s->println("Syntax error: unknown command");
     return;
   }
   if(user_cmds[cmd].meta){
@@ -108,7 +108,7 @@ void LogoVM::storeCmd(char *buffer){
     } else if (user_cmds[cmd].type == END_REPEAT_TYPE) {
       // Decrement the nesting level counter
       if (nest_level == 0){
-        Serial.println("Syntax error: closing unopened subroutine");
+        _s->println("Syntax error: closing unopened subroutine");
         return;
       }
       nest_level--;
@@ -132,7 +132,7 @@ void LogoVM::processNextCmd(){
     // if it's a repeat, enter another level in the stack
     subroutine_pos++;
     if(subroutine_pos >= SUBROUTINE_STACK_DEPTH){
-      Serial.println("Program error: stack too deep");
+      _s->println("Program error: stack too deep");
     }else{
       subroutine_stack[subroutine_pos].pos = cmd_read_pos;
       subroutine_stack[subroutine_pos].loops_remaining = cmd_stack[cmd_read_pos].arg - 1;
