@@ -1,0 +1,6 @@
+LogoVM         KEYWORD1
+adduserCmd     KEYWORD2
+processInput   KEYWORD2
+processNextCmd KEYWORD2
+play           KEYWORD2
+pause          KEYWORD2
