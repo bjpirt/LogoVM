@@ -40,7 +40,7 @@ void LogoVM::processInput(){
 }
 
 // This allows you to register a callback funtion
-void LogoVM::addUserCmd(char* cmd, byte type, boolean meta, void (* fn) (void)){
+void LogoVM::addUserCmd(char* cmd, byte type, boolean meta, fp fn){
   if (fn_counter == COMMAND_COUNT) {
     _s->println("Too many commands defined");
     return;
@@ -149,8 +149,12 @@ void LogoVM::processNextCmd(){
     }
   } else {
     // run the command
-    moveon = ((boolean (*)(int))user_cmds[cmd_stack[cmd_read_pos].cmd].fn)(cmd_stack[cmd_read_pos].arg);
+    moveon = user_cmds[cmd_stack[cmd_read_pos].cmd].fn(new FnContext(_first_call, cmd_stack[cmd_read_pos].arg));
+    _first_call = false;
   }
-  if(moveon) {cmd_read_pos++;};
+  if(moveon) {
+    cmd_read_pos++;
+    _first_call = true;
+  };
 }
 

@@ -6,39 +6,39 @@ LogoVM vm = LogoVM(Serial);
  *  Define the functions we are going to use to control the robot
  **/
 
-boolean forward(int distance){
+boolean forward(FnContext *context){
   Serial.print("FORWARD ");
-  Serial.println(distance);
+  Serial.println(context->arg);
   return true;
 }
 
-boolean backward(int distance){
+boolean backward(FnContext *context){
   Serial.print("BACKWARD ");
-  Serial.println(distance);
+  Serial.println(context->arg);
   return true;
 }
 
-boolean leftTurn(int angle){
+boolean leftTurn(FnContext *context){
   Serial.println("TURNLEFT");
   return true;
 }
 
-boolean rightTurn(int angle){
+boolean rightTurn(FnContext *context){
   Serial.println("TURNRIGHT");
   return true;
 }
 
-boolean pause(){
+boolean pause(FnContext *context){
   vm.pause();
   return true;
 }
 
-boolean play(){
+boolean play(FnContext *context){
   vm.start();
   return true;
 }
 
-boolean ping(){
+boolean ping(FnContext *context){
   Serial.println("PONG");
   return true;
 }

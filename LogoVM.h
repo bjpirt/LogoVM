@@ -16,7 +16,13 @@
 #define REPEAT_TYPE     5
 #define END_REPEAT_TYPE 6
 
-typedef void (* fp) (void);
+struct FnContext {
+  boolean first_call;
+  int arg;
+  FnContext(boolean f=false, int a=NULL):first_call(f),arg(a){}
+};
+
+typedef boolean (* fp) (FnContext *context);
 
 struct UserCmd {
   const char *cmd;
@@ -38,7 +44,7 @@ struct RepeatStack {
 class LogoVM {
   public:
     LogoVM(Stream &s);
-    void addUserCmd(char* cmd, byte type, boolean meta, void (* fn) (void));
+    void addUserCmd(char* cmd, byte type, boolean meta, fp fn);
     void processInput();
     void processNextCmd();
     void pause();
@@ -56,6 +62,7 @@ class LogoVM {
     boolean running;
     byte subroutine_pos;
     byte nest_level;
+    boolean _first_call;
     UserCmd user_cmds[COMMAND_COUNT];
     Command cmd_stack[CMD_STACK_SIZE];
     RepeatStack subroutine_stack[SUBROUTINE_STACK_DEPTH];
