@@ -26,11 +26,14 @@ void LogoVM::processInput(){
   if (_s->available() > 0){
     char incomingByte = _s->read();
     if(incomingByte == '\r' || incomingByte == '\n'){
-      // we have a message in the buffer
-      input_buffer[input_buffer_pos] = '\0';
-      storeCmd(input_buffer);
-      //reset the buffer because we've processed this line
-      input_buffer_pos = 0;
+      if(input_buffer_pos > 0){
+        // we have a message in the buffer so set this to end the string
+        input_buffer[input_buffer_pos] = '\0';
+        // store the command in the command table
+        storeCmd(input_buffer);
+        //reset the buffer because we've processed this line
+        input_buffer_pos = 0;
+      }
     }else{
       // add the character to the buffer
       input_buffer[input_buffer_pos] = incomingByte;
