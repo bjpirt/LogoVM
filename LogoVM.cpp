@@ -18,7 +18,7 @@ void LogoVM::start(){
 }
 
 void LogoVM::pause(){
-  running = true;
+  running =  false;
 }
 
 // This gets called each loop and is responsible for kicking off any commands
