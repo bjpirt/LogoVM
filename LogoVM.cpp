@@ -10,6 +10,7 @@ LogoVM::LogoVM(Stream &s) {
   running = false;
   subroutine_pos = -1;
   nest_level = 0;
+  _first_call = true;
 }
 
 void LogoVM::start(){
