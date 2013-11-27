@@ -128,6 +128,7 @@ void LogoVM::storeCmd(char *buffer){
 
 void LogoVM::processNextCmd(){
   boolean moveon = true;
+  FnContext fn_cxt;
   if (!running) { return; }
   if (cmd_read_pos >= cmd_write_pos) { return; }
   if (cmd_write_pos == 0) { return; }
@@ -153,7 +154,9 @@ void LogoVM::processNextCmd(){
     }
   } else {
     // run the command
-    moveon = user_cmds[cmd_stack[cmd_read_pos].cmd].fn(new FnContext(_first_call, cmd_stack[cmd_read_pos].arg));
+    fn_cxt.first_call = _first_call;
+    fn_cxt.arg = cmd_stack[cmd_read_pos].arg;
+    moveon = user_cmds[cmd_stack[cmd_read_pos].cmd].fn(&fn_cxt);
     _first_call = false;
   }
   if(moveon) {
