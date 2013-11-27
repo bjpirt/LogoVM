@@ -1,6 +1,6 @@
-LogoVM          KEYWORD1
-addUserCmd      KEYWORD2
-processInput    KEYWORD2
-processNextCmd  KEYWORD2
-play            KEYWORD2
-pause           KEYWORD2
+LogoVM	KEYWORD1
+addUserCmd	KEYWORD2
+processInput	KEYWORD2
+processNextCmd	KEYWORD2
+start	KEYWORD2
+pause	KEYWORD2
